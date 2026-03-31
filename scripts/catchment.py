@@ -90,5 +90,5 @@ def basin_dataframe(topo, geometry, basinname, basin, station):
 
     station_ids = [station]
     geometry = NLDI().get_basins(station)
-    basin.index = station_ids
+    basin_info.index = station_ids
     return basin_info

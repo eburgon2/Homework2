@@ -57,10 +57,6 @@ def processSNOTEL(site, stateab, WYOI):
             except:
                 pass
 
-    #remove July, August, September
-    months = [8,9]
-    WYsitedf = WYsitedf[~WYsitedf['M'].isin(months)]
-
     #remove M/D to calculate row min, mean, median, max tiers
     df = WYsitedf.copy()
     #drop the water year of interest from WYsitedf to calculate the min, mean, median, max SWE for each day of the water year across all other years of data available for that site
@@ -82,10 +78,6 @@ def processSNOTEL(site, stateab, WYOI):
     df['Q75'] = WYsitedf.quantile(0.75, axis=1)
     df['Q90'] = WYsitedf.quantile(0.90, axis=1)
     df['max'] = WYsitedf.max(axis=1)
-
-    #add back in M/d for plotting
-    # df.insert(0,'M',WYsitedf['M'])
-    # df.insert(1,'D',WYsitedf['D'])
 
     # Convert to datetime format
     df['date'] = pd.to_datetime(dict(year = 2023, month = df['M'], day = df['D'])) 
