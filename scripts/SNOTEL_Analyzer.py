@@ -40,6 +40,7 @@ def catchmentSNOTELAnalysis(sitedict, WY, watershed, AOI, DOI,plot = True):
     axs.plot(df['max'], color = 'slateblue', label = 'Max')
     axs.plot(df['median'], color = 'green', label = 'Median')
     axs.plot(df['min'], color = 'red', label = 'Min')
+    axs.plot(df['mean'], color = 'orange', label = 'Mean')
 
     #Fill between Quantiles
     axs.fill_between(df.index, df['max'], df['Q90'], color = 'slateblue', alpha = opacity, label = 'Q90')
@@ -116,6 +117,7 @@ def SNOTELPlots(sitedict, gdf_in_bbox, WY, watershed, AOI, DOI,plot = True):
             axs[i].plot(df['max'], color = 'slateblue', label = 'Max')
             axs[i].plot(df['median'], color = 'green', label = 'Median')
             axs[i].plot(df['min'], color = 'red', label = 'Min')
+            axs[i].plot(df['mean'], color = 'orange', label = 'Mean')
 
             #Fill between Quantiles
             axs[i].fill_between(df.index, df['max'], df['Q90'], color = 'slateblue', alpha = opacity, label = 'Q90')
