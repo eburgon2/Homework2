@@ -8,14 +8,13 @@ import pynhd as nhd
 from pynhd import NLDI, NHDPlusHR, WaterData
 import py3dep
 import pygeohydro as gh
-import networkx as nx
 import xarray as xr
 import xrspatial
 import os
-from scripts import maps, data, dataprocessing, SNOTEL_Analyzer, files
+
 nldi = NLDI()
 
-
+#I was just repeating this a lot so I moved it to a py file, just grabbing info from nldi 
 def nldi_info(station,navigation,source):
     flow = nldi.navigate_byid(
         fsource="nwissite",
@@ -26,6 +25,7 @@ def nldi_info(station,navigation,source):
     )
     return flow
 
+#Identify active stations within the basin boundaries
 def active(all_stations):
     station_ids = all_stations['identifier'].str.replace('USGS-', '').tolist()
     inventory_df, metadata = nwis.get_info(sites=station_ids, seriesCatalogOutput=True)
@@ -39,6 +39,7 @@ def active(all_stations):
 
     return st_active
 
+#create slope field based on flwtrib 
 def slope(flw_trib):
     vaa = nhd.nhdplus_vaa("input_data/nhdplus_vaa.parquet")
     flw_trib["comid"] = pd.to_numeric(flw_trib.nhdplus_comid)
@@ -49,7 +50,7 @@ def slope(flw_trib):
     slope[slope.slope < 0] = np.nan
     return slope
 
-def DEM(geometry,station):
+def DEM(geometry,station): #elevation and slope data combined
     topo = py3dep.get_map(["DEM", "Slope Degrees"], geometry, 90, geo_crs=4326, crs=5070) # Get the DEM and slope for the basin geometry at 90m resolution, reproject to 5070, and convert slope from degrees to m/m
     dem = py3dep.get_dem(geometry, 30) # Get the DEM for the basin geometry at 30m resolution
     dem = dem.rio.reproject(5070) # Reproject the DEM to match the CRS of the slope and the flowlines
@@ -62,6 +63,7 @@ def DEM(geometry,station):
     dem.rio.to_raster(Path("files/DEM", f"dem_{station}.tif"))
     return topo
 
+#create the basic basin data frame/base line, used for the summary and the vegetation map later
 def basin_dataframe(topo, geometry, basinname, basin, station):
     ave_basin_elevation = topo.elevation.mean().values
     min_basin_elevation = topo.elevation.min().values
